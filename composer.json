@@ -1,0 +1,18 @@
+{
+    "name": "sheld/swoole-websocket-router",
+    "description": "a router for swooler websocket server",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sheld Geng",
+            "email": "yali114@sina.com"
+        }
+    ],
+    "require": {
+        "monolog/monolog": "^1.23"
+    },
+    "autoload": {
+        "psr-4": {"sheld\\": "src/"}
+    }
+}
