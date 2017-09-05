@@ -45,6 +45,8 @@ class Router
 					$obj=new $controller;
 					if(method_exists($obj, $this->mothod))
 					{
+						$obj->_wsServer=$this->wsServer;
+						$obj->_frame=$this->frame;
 						return $obj->$method();
 					}
 				}

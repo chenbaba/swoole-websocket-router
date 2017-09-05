@@ -3,6 +3,8 @@ class Test
 {
 	public function a()
 	{
-		return "yes".date("Y-m-d H:i:s");
+		$message=json_decode($this->_frame->data);
+		var_dump($message);
+		return "message i recived is:".$message->m;
 	}
 }
