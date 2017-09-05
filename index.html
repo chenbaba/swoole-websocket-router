@@ -1,22 +1,111 @@
 
 <script>
+	(function(window, undefined) {
+		var websocketObj={
+			connectInterVal:null,
+			connectTimes:0,
+			reconnectMax:10,
+			reconntEach:3000,
+			server:"",
+			websocket:null,
+			redefined:null
+		}
+	
+	    var ezWebSocket = function(server, context) {
+	        return new ezWebSocket.fn.init(server, context);
+	    }
+	    ezWebSocket.fn = ezWebSocket.prototype = {
+	        init: function(server, context) {
+	        	if(window.WebSocket)
+	        	{
+	        		websocketObj.server=server;
+	        		websocketObj.redefined=context;
+	        		websocketObj.websocket=new WebSocket(websocketObj.server);
+	        		initWebsocket(websocketObj.websocket);
+	        	}
+	        	else
+	        	{
+	        		alert("The broswer did't support websockt.");
+	        	}
+	        }
+	    }
 
-var wsServer = 'ws://websocket.app:9527';
-var websocket = new WebSocket(wsServer);
-websocket.onopen = function (evt) {
-    console.log("Connected to WebSocket server.");
-};
+	    var initWebsocket=function(websocket)
+	    {
+	    	websocket.onopen = function (evt) {
+	    		if("onopen" in websocketObj.redefined)
+	    		{
+	    			websocketObj.redefined.onopen(evt);
+	    		}
+			    console.log("Connected to WebSocket server.");
+			    clearInterval(websocketObj.connectInterVal);
+			};
 
-websocket.onclose = function (evt) {
-    console.log("Disconnected");
-};
+			websocket.onclose = function (evt) {
+				if("onclose" in websocketObj.redefined)
+	    		{
+	    			websocketObj.redefined.onclose(evt);
+	    		}
+			    console.log("Disconnected");
+			    websocketObj.connectInterVal=setInterval(function(){
+			    	if(websocketObj.connectTimes>=websocketObj.reconnectMax)
+			    	{
+			    		clearInterval(websocketObj.connectInterVal);
+			    		console.log("We lost connection finally.");
+			    		return ;
+			    	}
+			    	if( websocket.readyState>1){
+			    		websocket = new WebSocket(websocketObj.server);
+			    		console.log('reconnecting '+(websocketObj.connectTimes+1)+'...');
+			    	}
+			    	websocketObj.connectTimes++;
+			    },3000);
+			};
 
-websocket.onmessage = function (evt) {
-    console.log('Retrieved data from server: ' + evt.data);
-};
+			websocket.onmessage = function (evt) {
+				if("onmessage" in websocketObj.redefined)
+	    		{
+	    			websocketObj.redefined.onmessage(evt);
+	    		}
+			    console.log('Retrieved data from server: ' + evt.data);
+			};
 
-websocket.onerror = function (evt, e) {
-    console.log('Error occured: ' + evt.data);
-};
+			websocket.onerror = function (evt, e) {
+				if("onerror" in websocketObj.redefined)
+	    		{
+	    			websocketObj.redefined.onerror(evt, e);
+	    		}
+			    //console.log('Error occured: ' + evt.data);
+			};
+	    }
+	    ezWebSocket.fn.init.prototype = ezWebSocket.fn;
+	    window.ezWebSocket = ezWebSocket;
+	})(window);
+
+
+
+
+
+	var redefined={
+		onopen:function(evt)
+		{
+			console.info('opened');
+		},
+		onmessage:function(evt)
+		{
+			console.log('Retrieved data from server: ' + evt.data);
+		},
+		onerror:function(evt, e)
+		{
+			console.info('onerror');
+		},
+		onclose:function(evt)
+		{
+			console.info('onclose');
+		}
+
+	};
+	ezWebSocket("ws://websocket.app:9527",redefined);
+
 
 </script>
