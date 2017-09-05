@@ -1,0 +1,22 @@
+# 简介
+
+这是一个基于 swoole 框架完成 websocket 路由的库。通过识别 websocket 信息中的指定字符串去调取相应的控制器类完成相应动作。
+
+# 目前状态
+
+刚刚形成基本框框，有待进一步完善。
+
+# TODO
+
+
+
+# 用法
+
+1. server.php 是入口文件，执行 php server.php 启动 websocket 服务器。
+2. controllers 是控制器文件存放位置，写成类形式。
+3. 客户端发送的消息默认应遵循 {"r":"controllerDirectory/controllerClass/method","m":"message"} ，信息会路由进相应的类中。
+4. 可以在 config.php 里修改绑定的 IP 和端口。
+
+# 其它
+
+另在 index.html 中封装了一段简单处理 websocket 的代码，后续会继续完善这个封装，如果最后可能的话，会独立一个这个项目。
